@@ -1,0 +1,23 @@
+{
+  "name": "bamazon",
+  "version": "1.0.0",
+  "description": "Ever wanted to shop without living your command line? Well now you can!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dimstar/bamazon.git"
+  },
+  "author": "Kyle Magee - Dimstar.io",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dimstar/bamazon/issues"
+  },
+  "homepage": "https://github.com/dimstar/bamazon#readme",
+  "dependencies": {
+    "inquirer": "^5.2.0",
+    "mysql": "^2.15.0"
+  }
+}
