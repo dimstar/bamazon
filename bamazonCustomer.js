@@ -5,6 +5,14 @@ let Inquirer = require('inquirer');
 // log it up
 let log = console.log;
 
+// STORE OBJECT this talks to the database, require it into this one
+    // ref this setup here for architecture .../codebcamp/htdocs/goodstuff/architecture
+
+// CUSTOMER VIEW
+// devise questions as object
+// fire questions
+    // take answer, call method
+
 /*
 INITIAL REQUIREMENTS
 The app should then prompt users with two messages.
