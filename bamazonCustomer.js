@@ -1,23 +1,35 @@
 // questionaire wrapper
 let Inquirer = require('inquirer');
 // let Store = require('./store');
-ui.log.write('Welcome to Bamazon.');
 let Mysql = require('mysql');
+
+connection = Mysql.createConnection({
+    host     : 'localhost',
+    user     : 'root',
+    password : '',
+    database : 'bamazon'
+});
+
 // log it up
 let log = console.log;
 
-connection.connect();
+log('Welcome to Bamazon!');
 
 let storeView = [
     {
-        type: 'input',
+        type: 'list',
         name: 'product',
         message: 'Please Select a Product',
-        // choices: ['1', '2', '3'],
-        // filter: Number,
-        validate: function(){},
-        transformer: function(input) {
-            return dostuff(input);
+        choices: [],
+        filter: function(val) {
+            // parse out the proudct id
+            let valSplit = val.split(' | ');
+            return valSplit[(valSplit.length-1)];
+        },
+        transformer: function(val) {
+            // parse out the proudct id
+            let valSplit = val.split(' | ');
+            return valSplit[valSplit.length];
         }
     },
     {
@@ -32,26 +44,31 @@ let storeView = [
     }
 ]
 
-let makeProductChoices = function(resultPackets){
-
+let makeProductChoices = function(resultPackets, questions){
+    for (const index in resultPackets) {
+        if (resultPackets.hasOwnProperty(index)) {
+            const product = resultPackets[index];
+            questions[0].choices.push(`${product.product_name} | ${product.price} | ${product.item_id}`);
+        }
+    }
+    return questions;
 }
+
+let storeCheckout = function(products){
+    storeViewComplete = makeProductChoices(products, storeView);
+    Inquirer.prompt(storeViewComplete).then(answers => {
+        console.log('\nOrder receipt:');
+        console.log(JSON.stringify(answers, null, '  '));
+    });
+}//storeFront
 
 connection.connect();
 connection.query('SELECT * FROM products', function (error, results, fields) {
     if (error) throw error;
     // console.log('The solution is: ', results);
-    storeFront(results);
+    storeCheckout(results);
 });
 connection.end();
-
-let storeFront = function(products){
-
-    Inquirer.prompt(storeView).then(answers => {
-        console.log('\nOrder receipt:');
-        console.log(JSON.stringify(answers, null, '  '));
-    });
-
-}//storeFront
 
 /*
 INITIAL REQUIREMENTS
