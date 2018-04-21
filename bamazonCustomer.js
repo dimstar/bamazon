@@ -59,14 +59,6 @@ let storeView = [
     },
     {
         type: 'confirm',
-        name: 'check_quantity_bad',
-        message: 'Sorry! Not enough inventory for this item. (hit enter to start over)',
-        when: function(answers){
-            return answers.quantity > Cart.stock_quantity;
-        }
-    },
-    {
-        type: 'confirm',
         name: 'check_quantity_good',
         message: 'Submit your order?',
         when: function(answers){
@@ -77,6 +69,14 @@ let storeView = [
             // get the requested stock from user
             Cart.new_stock = product_qty - answers.quantity;
             return answers.quantity <= Cart.stock_quantity;
+        }
+    },
+    {
+        type: 'confirm',
+        name: 'check_quantity_bad',
+        message: 'Sorry! Not enough inventory for this item. (hit enter to start over)',
+        when: function(answers){
+            return answers.quantity > Cart.stock_quantity;
         }
     }
 ]
@@ -125,7 +125,7 @@ let storeCheckout = function(products){
     storeViewComplete = makeProductChoices(products, storeView);
     Inquirer.prompt(storeViewComplete).then(answers => {
         if (answers.check_quantity_bad) {
-            ask();
+            return startCheckout();
           } else {
             console.log('\nOrder receipt:');
             console.log(JSON.stringify(answers, null, '  '));
@@ -137,12 +137,17 @@ let storeCheckout = function(products){
 }//storeFront
 
 // connection.connect();
-connection.query('SELECT * FROM products', function (error, results, fields) {
-    if (error) throw error;
-    // console.log('The solution is: ', results);
-    storeCheckout(results);
-});
-// connection.end();
+let startCheckout = function(){
+    connection.query('SELECT * FROM products', function (error, results, fields) {
+        if (error) throw error;
+        // console.log('The solution is: ', results);
+        storeCheckout(results);
+    });
+}
+
+// init this sucker!
+startCheckout();
+
 
 
 // output global cart
