@@ -15,6 +15,19 @@ let log = console.log;
 
 log('Welcome to Bamazon!');
 
+// GLOBAL
+let Cart = {
+    item_id: 0,
+    product_name: '',
+    stock_quantity: 0,
+    price: 0
+}
+
+let getLabelVal = function(label_vals, index){
+    let label_and_val = label_vals[index].split(':');
+    return label_and_val[1];
+}
+
 let storeView = [
     {
         type: 'list',
@@ -23,13 +36,13 @@ let storeView = [
         choices: [],
         filter: function(val) {
             // parse out the proudct id
-            let valSplit = val.split(' | ');
-            return valSplit[(valSplit.length-1)];
-        },
-        transformer: function(val) {
-            // parse out the proudct id
-            let valSplit = val.split(' | ');
-            return valSplit[valSplit.length];
+            let val_split = val.split(' | ');
+            // create global cart hack
+            Cart.item_id = getLabelVal(val_split, 3);
+            Cart.price = getLabelVal(val_split, 1);
+            Cart.product_name = getLabelVal(val_split, 0);
+            Cart.stock_quantity = getLabelVal(val_split, 2);
+            return val;
         }
     },
     {
@@ -41,6 +54,14 @@ let storeView = [
             return valid || 'Please enter a number';
         },
         filter: Number
+    },
+    {
+        type: 'confirm',
+        name: 'check_quantity',
+        message: 'Sorry! Not enough inventory for this item.',
+        when: function(answers){
+            return answers.quantity > Cart.stock_quantity;
+        }
     }
 ]
 
@@ -48,7 +69,7 @@ let makeProductChoices = function(resultPackets, questions){
     for (const index in resultPackets) {
         if (resultPackets.hasOwnProperty(index)) {
             const product = resultPackets[index];
-            questions[0].choices.push(`${product.product_name} | ${product.price} | ${product.item_id}`);
+            questions[0].choices.push(`name:${product.product_name} | price:${product.price} | qty:${product.stock_quantity} | id:${product.item_id}`);
         }
     }
     return questions;
@@ -59,6 +80,7 @@ let storeCheckout = function(products){
     Inquirer.prompt(storeViewComplete).then(answers => {
         console.log('\nOrder receipt:');
         console.log(JSON.stringify(answers, null, '  '));
+        log(Cart);
     });
 }//storeFront
 
@@ -69,6 +91,8 @@ connection.query('SELECT * FROM products', function (error, results, fields) {
     storeCheckout(results);
 });
 connection.end();
+
+// output global cart
 
 /*
 INITIAL REQUIREMENTS
