@@ -11,7 +11,7 @@ CREATE TABLE products(
     price DECIMAL(16,2),
     stock_quantity INT(16),
     PRIMARY KEY (item_id)
-)
+);
 
 INSERT INTO products(product_name, department_name, price, stock_quantity) VALUES( "Rhino Repelent","Safari", 14.00, 24);
 INSERT INTO products(product_name, department_name, price, stock_quantity) VALUES( "Giraffe Trebuchet","Safari", 60.00, 2);

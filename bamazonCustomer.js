@@ -1,17 +1,57 @@
-// db wrapper
-let Mysql = require('mysql');
 // questionaire wrapper
 let Inquirer = require('inquirer');
+// let Store = require('./store');
+ui.log.write('Welcome to Bamazon.');
+let Mysql = require('mysql');
 // log it up
 let log = console.log;
 
-// STORE OBJECT this talks to the database, require it into this one
-    // ref this setup here for architecture .../codebcamp/htdocs/goodstuff/architecture
+connection.connect();
 
-// CUSTOMER VIEW
-// devise questions as object
-// fire questions
-    // take answer, call method
+let storeView = [
+    {
+        type: 'input',
+        name: 'product',
+        message: 'Please Select a Product',
+        // choices: ['1', '2', '3'],
+        // filter: Number,
+        validate: function(){},
+        transformer: function(input) {
+            return dostuff(input);
+        }
+    },
+    {
+        type: 'input',
+        name: 'quantity',
+        message: 'How many do you wish to buy?',
+        validate: function(value) {
+            var valid = !isNaN(parseFloat(value));
+            return valid || 'Please enter a number';
+        },
+        filter: Number
+    }
+]
+
+let makeProductChoices = function(resultPackets){
+
+}
+
+connection.connect();
+connection.query('SELECT * FROM products', function (error, results, fields) {
+    if (error) throw error;
+    // console.log('The solution is: ', results);
+    storeFront(results);
+});
+connection.end();
+
+let storeFront = function(products){
+
+    Inquirer.prompt(storeView).then(answers => {
+        console.log('\nOrder receipt:');
+        console.log(JSON.stringify(answers, null, '  '));
+    });
+
+}//storeFront
 
 /*
 INITIAL REQUIREMENTS
